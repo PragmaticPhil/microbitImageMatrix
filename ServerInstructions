@@ -1,0 +1,55 @@
+Protocols and examples of server data that is sent to nodes:
+
+the server will send 2 types of radio signal to a node:
+
+   1:   Image data.  Each node gets a specific message with data to construct a 5x5 image. Also includes metadata
+       e.g.    [meta][row1:row2:row3:row4:row5]
+               meta = [serverID, 3char][nodeID, 3char][serverInstruction, 2 char][InstructionParams, 4char][separator][image data] - 
+                   [InstructionParams = 0001] = tells node where to store the image data for later play-back.
+
+       e.g.   pXa013990001!90909:90909:90909:90909:90909
+              pXa = message from server with image data
+              013 = node to which msg is being broadcast
+              99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
+              0001 = save the image in Frame 1 buffer 
+
+   2:  Server instructions.  Broadcast to all nodes simultaneously.
+       e.g. [serverID, 3char][nodeID, 3char][serverInstruction, 2 char][InstructionParams, 4char]
+       e.g. pXb999020001
+       pXb = message from server with instruction
+       999 means all nodes
+       02 means instruction is show frame (other instructions include set frame delay)
+       0001 means show frame 01.
+
+SERVERID PARAMS:
+Any prefex pX is a message from the server, but the 3rd char encodes more info:
+
+ID    DESCRIPTION:
+pXa   message contains image data for specific node
+pXb   message contains image data for whole row
+pXc   message contains image data for whole column
+pXd   message contains image data for whole matrix
+
+The data encoded in the 3rd char above is used to 'modify' the NODEID param... hence:
+      if serverID = "pXb" then the nodeID value will encode the ROW to which the image data is relevant.
+      This of course means that ALL nodes in that row will process the image data.
+
+
+LIST OF SERVER INSTRUCTIONS:
+
+ID    DESCRIPTION
+00    Save the image to the buffer shown in the InstructionParams field (it will be save to caste to int)
+01    Save the image to the buffer in the InstructionParams field OFFSET BY ROW LOCATION
+
+
+01* This instruction is used when the server wants to send the same image to all nodes on the same row (or col)
+Each node then has the same set of images in their buffers, but in different locations
+Transition effects between images can then be done without server interference.
+01 is basically a much more efficient way than 00 of serving the same images to nodes in the same row.
+
+
+
+
+
+
+Each node will build up a number of buffers, which will allow for smooth rendering (albeit with long load times).
