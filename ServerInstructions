@@ -1,17 +1,32 @@
+
 Protocols and examples of server data that is sent to nodes:
 
 the server will send 2 types of radio signal to a node:
+
+   0:    Setup instructions.  Nodes are dumb - they know their ID, but they have no idea where they fit into the matric (x, y)
+         To support dynamic matrices the server will allocate a row / col ID to each node in an initial setup phase.            
 
    1:   Image data.  Each node gets a specific message with data to construct a 5x5 image. Also includes metadata
        e.g.    [meta][row1:row2:row3:row4:row5]
                meta = [serverID, 3char][nodeID, 3char][serverInstruction, 2 char][InstructionParams, 4char][separator][image data] - 
                    [InstructionParams = 0001] = tells node where to store the image data for later play-back.
 
-       e.g.   pXa013990001!90909:90909:90909:90909:90909
+       e.g.   pXb013990001!90909:90909:90909:90909:90909
               pXa = message from server with image data
               013 = node to which msg is being broadcast
               99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
               0001 = save the image in Frame 1 buffer 
+              
+      Note - an important use case of the matrix is to smoothly scroll images - this will be enabled for horizontal and vertical
+      scrolling (and maybe a combo in future iterations).
+      To support this we will enable the server to send an image to a wholoe ROW (or col) of nodes at the same time...
+      Nodes will insert the image into their buffers in line with THEIR location in the matrix... which is set in (0) above.
+
+       e.g.   pXb001990001!90909:90909:90909:90909:90909
+              pXb = message from server with image data for an entire row
+              001 = ROW  to which msg is being broadcast - in this case ALL nodes in ROW 1
+              99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
+              0001 = default Frame buffer - each node adjusts this based on their location in the row.
 
    2:  Server instructions.  Broadcast to all nodes simultaneously.
        e.g. [serverID, 3char][nodeID, 3char][serverInstruction, 2 char][InstructionParams, 4char]
