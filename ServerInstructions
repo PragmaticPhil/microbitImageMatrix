@@ -1,19 +1,35 @@
 
 Protocols and examples of server data that is sent to nodes:
 
-the server will send 2 types of radio signal to a node:
+The server will send 3 types of message (over radio) to a node.
+   NB - ALL messages have the same basic pattern:
+   [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char]...
+   Messages with an image have that data as a suffix.  Rem - length of the message depends on the message type.
 
-   0:    Setup instructions.  Nodes are dumb - they know their ID, but they have no idea where they fit into the matric (x, y)
-         To support dynamic matrices the server will allocate a row / col ID to each node in an initial setup phase.            
+TYPE0:   Server instructions.  
+         Inckudes instructions that nodes use to configure operational values, such as their row / col, or default interframe delay
 
-   1:   Image data.  Each node gets a specific message with data to construct a 5x5 image. Also includes metadata
+         FORMAT: [serverID, 2char][messageType, 2 char][InstructionParams, 4char][TargetID, 3char] 
+
+       e.g.   pX0_60_0305_999  (rem - we don't send underscores, so this is sent as pX0600104999
+              pX = message from server
+              0  = message is an instruction (so will NOT have image data)
+              60 = This message is telling all nodes to set their ROW and COL params 
+              03 = There are 3 rows (this is a count so absolute)
+              05 = There are 5 columns
+
+TYPE1:   Image data.  
+         The core of this app is the server passing image data to the nodes.
+         
+         FORMAT: [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char][separator][image data] - 
+         
        e.g.    [meta][row1:row2:row3:row4:row5]
-               meta = [serverID, 3char][nodeID, 3char][serverInstruction, 2 char][InstructionParams, 4char][separator][image data] - 
-                   [InstructionParams = 0001] = tells node where to store the image data for later play-back.
+               meta = 
+                   
 
        e.g.   pXb013990001!90909:90909:90909:90909:90909
               pXa = message from server with image data
-              013 = node to which msg is being broadcast
+              
               99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
               0001 = save the image in Frame 1 buffer 
               
@@ -28,22 +44,17 @@ the server will send 2 types of radio signal to a node:
               99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
               0001 = default Frame buffer - each node adjusts this based on their location in the row.
 
-   2:  Server instructions.  Broadcast to all nodes simultaneously.
-       e.g. [serverID, 3char][nodeID, 3char][serverInstruction, 2 char][InstructionParams, 4char]
-       e.g. pXb999020001
-       pXb = message from server with instruction
-       999 means all nodes
-       02 means instruction is show frame (other instructions include set frame delay)
-       0001 means show frame 01.
 
 SERVERID PARAMS:
 Any prefex pX is a message from the server, but the 3rd char encodes more info:
 
 ID    DESCRIPTION:
+pXx   message contains set up instructions (e.g. matrix dims)
 pXa   message contains image data for specific node
 pXb   message contains image data for whole row
 pXc   message contains image data for whole column
 pXd   message contains image data for whole matrix
+pXe   message contains running instructions from server
 
 The data encoded in the 3rd char above is used to 'modify' the NODEID param... hence:
       if serverID = "pXb" then the nodeID value will encode the ROW to which the image data is relevant.
@@ -51,10 +62,33 @@ The data encoded in the 3rd char above is used to 'modify' the NODEID param... h
 
 
 LIST OF SERVER INSTRUCTIONS:
+Server instructions are broadcast to either single nodes, rows, cols or the whole matrix.
+There aren't many, so we'll use integers to group ones that are similarly tagetted.  This will allow us to extract the first int
+from the message string and infer some useful info.
+The values below are hardcoded into nodes:
 
 ID    DESCRIPTION
-00    Save the image to the buffer shown in the InstructionParams field (it will be save to caste to int)
-01    Save the image to the buffer in the InstructionParams field OFFSET BY ROW LOCATION
+0x    used for instructions aimed at SINGLE NODES:
+      - the param that follows is the FRAME ID - rem, nodeID is passed in separately (and ignored in many cases)
+00    Save the image to the buffer shown in the InstructionParams field (it will be safe to caste to int)
+
+2x    used for instructions aimed at WHOLE ROWS:
+20    Save the image to the buffer in the InstructionParams field OFFSET BY COL LOCATION
+      - rem, each node knows its location. By offsetting we can achieve smooth animations.
+
+4x    used for instructions aimed at WHOLE COLUMNS:
+40    Save the image to the buffer in the InstructionParams field OFFSET BY ROW LOCATION
+
+6x    used for instructions aimed at WHOLE MATRIX - all nodes:
+60    Set your ROW / COL params
+61    Clear all
+62    Scroll left
+63    Scroll right
+64    Scroll up
+65    Scroll down
+66    Pause
+67    Show a specific frame from your buffer
+70    Do a check sum and report status
 
 
 01* This instruction is used when the server wants to send the same image to all nodes on the same row (or col)
@@ -63,7 +97,7 @@ Transition effects between images can then be done without server interference.
 01 is basically a much more efficient way than 00 of serving the same images to nodes in the same row.
 
 
-
+[InstructionParams = 0001] = tells node where to store the image data for later play-back.
 
 
 
