@@ -12,8 +12,7 @@ TYPE0:   Server instructions.
          FORMAT: [serverID, 2char][messageType, 2 char][InstructionParams, 4char][TargetID, 3char] 
 
        e.g.   pX0_60_0305_999  (rem - we don't send underscores, so this is sent as pX0600104999
-              pX = message from server
-              0  = message is an instruction (so will NOT have image data)
+              pX0 = message from server with an instruction (so will NOT have image data)
               60 = This message is telling all nodes to set their ROW and COL params 
               03 = There are 3 rows (this is a count so absolute)
               05 = There are 5 columns
@@ -22,44 +21,23 @@ TYPE1:   Image data.
          The core of this app is the server passing image data to the nodes.
          
          FORMAT: [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char][separator][image data] - 
-         
-       e.g.    [meta][row1:row2:row3:row4:row5]
-               meta = 
-                   
 
-       e.g.   pXb013990001!90909:90909:90909:90909:90909
-              pXa = message from server with image data
-              
-              99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
-              0001 = save the image in Frame 1 buffer 
+       e.g.   pX1_00_0009_023_!90909:90909:90909:90909:90909  (pX1000009023!90909:90909:90909:90909:90909)
+              pX1    = message from server with image data
+              00     = instruction from server (save image to specific node)
+              0009   = save the image in Frame 9 buffer (which will be buffer #10 of course)
+              023    = node that needs to process this is nodeID = 23
               
       Note - an important use case of the matrix is to smoothly scroll images - this will be enabled for horizontal and vertical
       scrolling (and maybe a combo in future iterations).
-      To support this we will enable the server to send an image to a wholoe ROW (or col) of nodes at the same time...
+      To support this we will enable the server to send an image to a wholoe ROW (or COL) of nodes at the same time...
       Nodes will insert the image into their buffers in line with THEIR location in the matrix... which is set in (0) above.
 
-       e.g.   pXb001990001!90909:90909:90909:90909:90909
-              pXb = message from server with image data for an entire row
-              001 = ROW  to which msg is being broadcast - in this case ALL nodes in ROW 1
-              99  = instruction from server (save image, but irrelevant cos inferred from the a in pXa)
-              0001 = default Frame buffer - each node adjusts this based on their location in the row.
-
-
-SERVERID PARAMS:
-Any prefex pX is a message from the server, but the 3rd char encodes more info:
-
-ID    DESCRIPTION:
-pXx   message contains set up instructions (e.g. matrix dims)
-pXa   message contains image data for specific node
-pXb   message contains image data for whole row
-pXc   message contains image data for whole column
-pXd   message contains image data for whole matrix
-pXe   message contains running instructions from server
-
-The data encoded in the 3rd char above is used to 'modify' the NODEID param... hence:
-      if serverID = "pXb" then the nodeID value will encode the ROW to which the image data is relevant.
-      This of course means that ALL nodes in that row will process the image data.
-
+       e.g.   pX1_20_0001_02_!90909:90909:90909:90909:90909
+              pX1    = message from server with image data for an entire row
+              20     = all nodes in the relevant ROW should save this image to one of their buffers
+              0001   = We are talking to row1 (the second row).
+              02     = default Frame buffer - each node adjusts where they save image based on this and their location in the row.
 
 LIST OF SERVER INSTRUCTIONS:
 Server instructions are broadcast to either single nodes, rows, cols or the whole matrix.
