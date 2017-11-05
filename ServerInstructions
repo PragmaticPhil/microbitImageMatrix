@@ -1,7 +1,7 @@
 
 Protocols and examples of server data that is sent to nodes:
 
-The server will send 3 types of message (over radio) to a node.
+The server will send 2 types of message (over radio) to a node.
    NB - ALL messages have the same basic pattern:
    [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char]...
    Messages with an image have that data as a suffix.  Rem - length of the message depends on the message type.
@@ -11,13 +11,11 @@ TYPE0:   Server instructions.
 
          FORMAT: [serverID, 2char][messageType, 2 char][InstructionParams, 4char][TargetID, 3char] 
 
-       e.g.   pX0_60_0305_999  (rem - we don't send underscores, so this is sent as pX0600104999
-
-
-pX0 = message from server with an instruction (so will NOT have image data)
-              60 = This message is telling all nodes to set their ROW and COL params 
-              03 = There are 3 rows (this is a count so absolute)
-              05 = There are 5 columns
+       e.g.    pX0_60_0305_999  (rem - we don't send underscores, so this is sent as pX0600104999
+               pX0 = message from server with an instruction (so will NOT have image data)
+               60 = This message is telling all nodes to set their ROW and COL params 
+               03 = There are 3 rows (this is a count so absolute)
+               05 = There are 5 columns
 
 TYPE1:   Image data.  
          The core of this app is the server passing image data to the nodes.
