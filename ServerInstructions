@@ -77,8 +77,9 @@ ID    DESCRIPTION
 72    Dim all pixels
 73    Dim all non-blank pixels
 80    Pause
-81    Pause at a specified frame
-82    Show a specific frame from your buffer
+81    Unpause
+82    Pause at a specified frame
+83    Show a specific frame from your buffer
 90    Do a check sum and report status
 
 
