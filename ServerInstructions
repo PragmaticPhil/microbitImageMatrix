@@ -12,7 +12,9 @@ TYPE0:   Server instructions.
          FORMAT: [serverID, 2char][messageType, 2 char][InstructionParams, 4char][TargetID, 3char] 
 
        e.g.   pX0_60_0305_999  (rem - we don't send underscores, so this is sent as pX0600104999
-              pX0 = message from server with an instruction (so will NOT have image data)
+
+
+pX0 = message from server with an instruction (so will NOT have image data)
               60 = This message is telling all nodes to set their ROW and COL params 
               03 = There are 3 rows (this is a count so absolute)
               05 = There are 5 columns
@@ -20,9 +22,9 @@ TYPE0:   Server instructions.
 TYPE1:   Image data.  
          The core of this app is the server passing image data to the nodes.
          
-         FORMAT: [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char][separator][image data] - 
+         FORMAT: [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char][image data] - 
 
-       e.g.   pX1_00_0009_023_!90909:90909:90909:90909:90909  (pX1000009023!90909:90909:90909:90909:90909)
+       e.g.   pX1_00_0009_023_90909:90909:90909:90909:90909  (pX100000902390909:90909:90909:90909:90909)
               pX1    = message from server with image data
               00     = instruction from server (save image to specific node)
               0009   = save the image in Frame 9 buffer (which will be buffer #10 of course)
@@ -36,8 +38,16 @@ TYPE1:   Image data.
        e.g.   pX1_20_0001_02_!90909:90909:90909:90909:90909
               pX1    = message from server with image data for an entire row
               20     = all nodes in the relevant ROW should save this image to one of their buffers
-              0001   = We are talking to row1 (the second row).
-              02     = default Frame buffer - each node adjusts where they save image based on this and their location in the row.
+              0001   = default / base Frame buffer - each node adjusts where they save image based on this and their location in the row.
+              02     = We are talking to row1 (the second row).
+
+MAP (where serverMessage as a message string containing image data):
+   serverMessage[0:2]   = ServerID
+   serverMessage[2:3]   = messageType (instruction or image)
+   serverMessage[3:5]   = server instruction code.
+   serverMessage[5:9]   = parameter relating to server instruction (4 chars, can be 2 2-char params, eg Row / Col)
+   serverMessage[9:12]  = target (usually a nodeID, but not always - can be frame buffer ID too)
+   serverMessage[12:41] = image data
 
 LIST OF SERVER INSTRUCTIONS:
 Server instructions are broadcast to either single nodes, rows, cols or the whole matrix.
@@ -57,16 +67,21 @@ ID    DESCRIPTION
 4x    used for instructions aimed at WHOLE COLUMNS:
 40    Save the image to the buffer in the InstructionParams field OFFSET BY ROW LOCATION
 
-6x    used for instructions aimed at WHOLE MATRIX - all nodes:
+60+   used for instructions aimed at WHOLE MATRIX - all nodes:
 60    Set your ROW / COL params
 61    Clear all
 62    Scroll left
 63    Scroll right
 64    Scroll up
 65    Scroll down
-66    Pause
-67    Show a specific frame from your buffer
-70    Do a check sum and report status
+70    Brighten all pixels
+71    Brighten non-blank pixels
+72    Dim all pixels
+73    Dim all non-blank pixels
+80    Pause
+81    Pause at a specified frame
+82    Show a specific frame from your buffer
+90    Do a check sum and report status
 
 
 01* This instruction is used when the server wants to send the same image to all nodes on the same row (or col)
