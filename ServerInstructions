@@ -18,7 +18,7 @@ TYPE0:   Server instructions.
                05 = There are 5 columns
 
 TYPE1:   Image data.  
-         The core of this app is the server passing image data to the nodes.
+          The core of this app is the server passing image data to the nodes.
          
          FORMAT: [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char][image data] - 
 
@@ -68,16 +68,20 @@ ID    DESCRIPTION
 60+   used for instructions aimed at WHOLE MATRIX - all nodes:
 60    Set your ROW / COL params
 61    Clear all
-62    Scroll left
-63    Scroll right
-64    Scroll up
-65    Scroll down
+
+62    Scroll left (ALL rows)
+63    Scroll right (ALL rows)
+64    Speed up frame rate
+65    Slow down frame rate
+
 70    Brighten all pixels
 71    Brighten non-blank pixels
 72    Dim all pixels
 73    Dim all non-blank pixels
+
 80    Pause
 81    Unpause
+
 82    Pause at a specified frame
 83    Show a specific frame from your buffer
 90    Do a check sum and report status
