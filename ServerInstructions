@@ -74,34 +74,38 @@ ID    DESCRIPTION
 
 2x    used for instructions aimed at WHOLE ROWS:
 20    Save the image to the buffer in the InstructionParams field OFFSET BY COL LOCATION
-21    Scroll right (this row only)
-22    Scroll left (this row only)
+21    Scroll left (this row only)
+22    Scroll right (this row only)
 
 4x    used for instructions aimed at WHOLE COLUMNS:
-40    Save the image to the buffer in the InstructionParams field OFFSET BY ROW LOCATION
+... outside scope and unlikely to fit onto node code.  Reserved for now anyway.
 
 60+   used for instructions aimed at WHOLE MATRIX - all nodes:
 60    Set your ROW / COL params
-61    Clear all
+61    Clear all*
 
 62    Scroll left (ALL rows)
 63    Scroll right (ALL rows)
 64    Speed up frame rate by hardcoded incrememt
 65    Slow down frame rate by hardcoded increment
+66    Set frame speed to param passed in in serverMessage[5:9]
 
-70    Brighten all pixels
-71    Brighten non-blank pixels
-72    Dim all pixels
-73    Dim all non-blank pixels
+70    Brighten all pixels*
+71    Brighten non-blank pixels*
+72    Dim all pixels*
+73    Dim all non-blank pixels*
 
 80    Pause
 81    Unpause
-82    Pause at a specified frame
-83    Show a specific frame from your buffer
-90    Do a check sum and report status
+82    Pause at a specified frame*
+83    Show a specific frame from your buffer*
+90    Do a check sum and report status*
 
-EXAMPLES OF FULLY FORMED SERVER INSTRUCTIONS (and ones that are encoded in node - some of above are dreamware):
-... Scroll Left   = pX062
-... Scroll Right  = pX063  
-... unPause       = pX081
-... Pause         = pX082
+EXAMPLES OF FULLY FORMED SERVER INSTRUCTIONS (and ones that are encoded in node - ones marked *  above are dreamware atm):
+... Set dims                        = pX0600205999 (pX0 60 02 05 999)   - dims are 2 rows by 5 cols.
+... Scroll left (specific row)      = pX0210001    (pX0 21 0001)        - row 1 (second row) will be set to scroll left
+... Scroll right (specific row)     = pX0220001    (pX0 21 0002)        - row 2 (third row) will be set to scroll right
+... Scroll Left                     = pX062
+... Scroll Right                    = pX063  
+... unPause                         = pX081
+... Pause                           = pX082
