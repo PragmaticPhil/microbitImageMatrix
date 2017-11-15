@@ -25,21 +25,23 @@ def processServerMessage(rawMsg):
     if(len(rawMsg) < 5): return
     #   more often than not the poll will return the String 'None'.
     #   the shortest valid server message is 5 chars ;)
-    #   hence this simple check allows us to eliminate radio clutter that is not worth checking
+    #   hence this simple and early check allows us to eliminate radio clutter that is not worth analysing
     
     if(not isValidServerMessage(rawMsg)):    return
+    
+    #   If execution reaches this point it means we have a valid and relevant message.
+    #   There are 2 types (instruction = 0 and image = 1) - we'll send them off for processing separately below:
     if(rawMsg[2 : 3] == "0"):   processServerInstruction(rawMsg)
     else:                       processImageMessage(rawMsg)
+
 
 def isValidServerMessage(rawMsg):
     #   try:
     #   With a bit of trepidation I have removed the try / catch blocks from the code - mostly to save space
     #   In theory it is safe here - we've already confirmed the String is at least 5 chars long.
-       if(rawMsg[0 : 2] == "pX"):                     # ALL messages sent by server are prefixed with "pX"
-          return isRelevantServerMessage(rawMsg)
+       if(rawMsg[0 : 2] == "pX"):   return isRelevantServerMessage(rawMsg)
        return False
-    except:
-       return False
+
 
 def isRelevantServerMessage(rawMsg):
 # At this stage we know the radio message has come from our server BUT...
@@ -55,10 +57,10 @@ def isRelevantServerMessage(rawMsg):
     
     #   Code below therefore applies to IMAGE carrying data signals from server:
     if((rawMsg[3 : 5] == "00") and (int(rawMsg[9 : 12]) == nodeID)):    return True      
-    #   Returns true if message targets this node specifically.
+    #   Returns true if message targets this node specifically ("00" means target is single node).
     
     if((rawMsg[3 : 4] == "2") and (int(rawMsg[9 : 12]) == rowRef)):     return True      
-    #   Returns true if message is aimed at the row this node occupies
+    #   Returns true if message is aimed at the row this node occupies ("2" indicates target is a whole row)
     
     return False
 #    except:
