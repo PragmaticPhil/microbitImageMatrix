@@ -52,7 +52,8 @@ TYPE1:   Image data.
       Note - an important use case of the matrix is to smoothly scroll images - this will be enabled for horizontal and (dreamware alert) vertical
       scrolling (and maybe a combo in future iterations).
       To support this we will enable the server to send an image to a wholoe ROW (or COL) of nodes at the same time...
-      Nodes will insert the image into their buffers in line with THEIR location in the matrix... which is set in (0) above.
+
+Nodes will insert the image into their buffers in line with THEIR location in the matrix... which is set in (0) above.
 
        e.g.   pX1_20_0001_02_!90909:90909:90909:90909:90909
               pX1    = message from server with image data
@@ -89,6 +90,8 @@ ID    DESCRIPTION
 64    Speed up frame rate by hardcoded incrememt
 65    Slow down frame rate by hardcoded increment
 66    Set frame speed to param passed in in serverMessage[5:9]
+67    Animate to right (i.e. move through node buffers in increments of +1) - ALL rows
+67    Animate to left (i.e. move through node buffers in increments of -1) - ALL rows
 
 70    Brighten all pixels*
 71    Brighten non-blank pixels*
