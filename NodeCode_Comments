@@ -115,3 +115,26 @@ def setNodeRowAndCol(rowStr, colStr):
     rowRef = int((nodeID - colRef) / int(colStr))
     
     
+
+-----------------------------------------------------------------------------------
+4 - SHOWING IMAGES (EFFECTIVELY ANIMATING):
+    Node are doing one of the following:
+    Showing a static frame (Pause is ON)
+    Cycling through their buffer (scroll direction = 0 and pause is OFF)
+    Scrolling (scroll dir = 1 or -1 and pause is OFF)
+
+    This method is ONLY called is pause is off, so we need to decide which animation style to use:
+
+def showNextFrame():
+    global currentFrame
+    if(scrollDirection == 0):       
+    #   here we are going to show the next image buffer that the node has:
+        currentFrame = getAdjacentFrameIndex(1)
+        #   basically returns the next frame from the node's buffer and shows it below:
+        display.show(Image(imageDataStore[currentFrame]))    
+    else:
+        display.show(Image(makeNextScrollFrame()))   
+        #   We are scrolling, so we need to make the next frame (can't just use the buffer):
+        
+        
+        
