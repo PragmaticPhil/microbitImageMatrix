@@ -1,24 +1,40 @@
+
 To keep the node code slim enough to fit on a micro:bit ALL comments and debug have been removed.
 I do not like removing comments so instead I will copy code chunks from mbImageService_Node below and add the relevant comments
 Code will change and I will not update below every time, but the meaning of the comments should be preserved:
 
 
-1 = Establishing if radio comms received should be processed by the node.
-Nodes poll their radion every 10 milliseconds for a message
+-----------------------------------------------------------------------------------
+1 - 'MAIN'
+
+while True:
+    sleep(10)
+    #   Ensure duration is LESS than standard delay between radio sends in server (25)
+    processServerMessage(getServerMessage())
+    
+    if not(pauseShowFrame):     
+        showNextFrame()
+        sleep(frameSpeed - 10)
+        
+
+-----------------------------------------------------------------------------------
+2 - RECEIVING AND PRE-FILTERING THE RADIO MESSAGE:
 
 
 def processServerMessage(rawMsg):
     if(len(rawMsg) < 5): return
-    # more often than not the poll will return the String 'None'.
-    # the shortest valid server message is 5 chars
-    # hence this simple check allows us to eliminate radio clutter that is not worth checking
+    #   more often than not the poll will return the String 'None'.
+    #   the shortest valid server message is 5 chars ;)
+    #   hence this simple check allows us to eliminate radio clutter that is not worth checking
     
     if(not isValidServerMessage(rawMsg)):    return
     if(rawMsg[2 : 3] == "0"):   processServerInstruction(rawMsg)
     else:                       processImageMessage(rawMsg)
 
 def isValidServerMessage(rawMsg):
-    try:
+    #   try:
+    #   With a bit of trepidation I have removed the try / catch blocks from the code - mostly to save space
+    #   In theory it is safe here - we've already confirmed the String is at least 5 chars long.
        if(rawMsg[0 : 2] == "pX"):                     # ALL messages sent by server are prefixed with "pX"
           return isRelevantServerMessage(rawMsg)
        return False
