@@ -1,7 +1,7 @@
 Protocols and examples of server data that is sent to nodes:
 
 The server will send 2 types of message (over radio) to a node.
-Messages are sent in plain text (get over it!) and conform to the map below:
+Messages are sent in plain text (yep!) and conform to the map below:
 
 MAP (where serverMessage as a message string containing image data):
 1   serverMessage[0:2]   = ServerID
@@ -90,8 +90,8 @@ ID    DESCRIPTION
 64    Speed up frame rate by hardcoded incrememt
 65    Slow down frame rate by hardcoded increment
 66    Set frame speed to param passed in in serverMessage[5:9]
-67    Animate to right (i.e. move through node buffers in increments of +1) - ALL rows
-67    Animate to left (i.e. move through node buffers in increments of -1) - ALL rows
+67    Animate to left (i.e. move through node buffers in increments of 1) - ALL rows
+68    Animate to right (i.e. move through node buffers in increments of -1) - ALL rows
 
 70    Brighten all pixels*
 71    Brighten non-blank pixels*
