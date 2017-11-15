@@ -1,4 +1,5 @@
 
+
 To keep the node code slim enough to fit on a micro:bit ALL comments and debug have been removed.
 I do not like removing comments so instead I will copy code chunks from mbImageService_Node below and add the relevant comments
 Code will change and I will not update below every time, but the meaning of the comments should be preserved:
@@ -66,3 +67,33 @@ def isRelevantServerMessage(rawMsg):
 #    except:
 
     return False
+
+
+-----------------------------------------------------------------------------------
+3 - PROCESSING SERVER INSTRUCTIONS:
+    There are a few below, and some are not used... these may be removed to make space:
+    ... 64 and 65, and the accompanying method (incrementFrameSpeed) could be dropped (unused)
+    ... I will need to find space to support server synch... later though.
+
+def processServerInstruction(rawMsg):
+    global pauseShowFrame
+    global scrollDirection
+    
+    instructionType = int(rawMsg[3 : 5])
+    print("Server instruction = " + str(instructionType))
+    if(instructionType == 60): setNodeRowAndCol(rawMsg[5 : 7], rawMsg[7 : 9])    
+    if(instructionType == 62): scrollDirection = 1
+    if(instructionType == 63): scrollDirection = -1
+    if(instructionType == 64): incrementFrameSpeed(10)
+    if(instructionType == 65): incrementFrameSpeed(-10)
+    if(instructionType == 66): setFrameSpeed(int(rawMsg[5:9]))
+    if(instructionType == 80): pauseShowFrame = True
+    if(instructionType == 81): pauseShowFrame = False
+    
+    if((instructionType == 21) and (int(rawMsg[9 : 12]) == rowRef)):    scrollDirection = 1
+    if((instructionType == 22) and (int(rawMsg[9 : 12]) == rowRef)):    scrollDirection = -1
+    #   Above, 21 = whole row scroll left and 22 = whole row scroll right.
+    #   we ensure also that message is aimed at the row THIS node occupies.
+    #   Note - usually I would write setScrollDirection and setPause methods... I have opted here
+    #   for space - it will actually take slightly more space (just method declaration).
+
