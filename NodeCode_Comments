@@ -29,7 +29,9 @@ def processServerMessage(rawMsg):
     #   hence this simple and early check allows us to eliminate radio clutter that is not worth analysing
     
     if(not isValidServerMessage(rawMsg)):    return
-    
+
+
+
     #   If execution reaches this point it means we have a valid and relevant message.
     #   There are 2 types (instruction = 0 and image = 1) - we'll send them off for processing separately below:
     if(rawMsg[2 : 3] == "0"):   processServerInstruction(rawMsg)
@@ -97,3 +99,19 @@ def processServerInstruction(rawMsg):
     #   Note - usually I would write setScrollDirection and setPause methods... I have opted here
     #   for space - it will actually take slightly more space (just method declaration).
 
+
+
+#   Perhaps the most important server instruction is the config - the server tells each node what the dims
+#   of the matriz are, and the node works out which row / col it sits in:
+def setNodeRowAndCol(rowStr, colStr):
+    global totalRows
+    global totalCols
+    global rowRef
+    global colRef
+
+    totalRows = int(rowStr)
+    totalCols = int(colStr)
+    colRef = int(nodeID % totalCols)
+    rowRef = int((nodeID - colRef) / int(colStr))
+    
+    
