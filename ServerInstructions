@@ -105,7 +105,7 @@ ID    DESCRIPTION
 
 EXAMPLES OF ENABLED SERVER INSTRUCTIONS (and ones that are encoded in node - ones marked *  above are dreamware atm):
 ... Set dims                        = pX0600205    (pX0 60 02 05)       - dims are 2 rows by 5 cols.
-... Set frame buffer size           = pX0600005    (pX0 60 0005)        - Nodes use 5 frames from their buffer
+... Set frame buffer size           = pX0100005    (pX0 60 0005)        - Nodes use 5 frames from their buffer
 ... Scroll left (specific row)      = pX0210001    (pX0 21 0001)        - row 1 (second row) will be set to scroll left
 ... Scroll right (specific row)     = pX0220001    (pX0 22 0002)        - row 2 (third row) will be set to scroll right
 ... Scroll Left (all rows)          = pX062
