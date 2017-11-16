@@ -42,9 +42,7 @@ def getServerMessage():
 
 def processServerMessage(rawMsg):
     if(len(rawMsg) < 5): return
-    print(rawMsg)
     if(not isValidServerMessage(rawMsg)):    return
-    print("Message is valid")
     if(rawMsg[2 : 3] == "0"):   processServerInstruction(rawMsg)
     else:                       processImageMessage(rawMsg)
 
@@ -72,8 +70,6 @@ def processImageMessage(rawMsg):
     frameRef = int(rawMsg[5 : 9])
 
     if(serverMsgStr == "00"):
-        print(rawMsg)
-        print("Inserting image into single node in location: " + rawMsg[5 : 9])
         imageDataStore[frameRef] = imageStr
         display.show(Image(imageDataStore[frameRef]))
         return
@@ -90,34 +86,47 @@ def processImageMessage(rawMsg):
 def processServerInstruction(rawMsg):
     global pauseShowFrame
     global scrollDirection
-    global animationDirection
+    global totalFrames
     
     instructionType = int(rawMsg[3 : 5])
-    print("Server instruction = " + str(instructionType))
-    if(instructionType == 60): setNodeRowAndCol(rawMsg[5 : 7], rawMsg[7 : 9])    
+    if(instructionType == 99): reset()
+    if(instructionType == 60): setNodeRowAndCol(rawMsg[5 : 7], rawMsg[7 : 9])
+    if(instructionType == 61): totalFrames = int(rawMsg[5:9])
     if(instructionType == 62): scrollDirection = 1
     if(instructionType == 63): scrollDirection = -1
-    if(instructionType == 64): incrementFrameSpeed(10)
-    if(instructionType == 65): incrementFrameSpeed(-10)
+    #if(instructionType == 64): incrementFrameSpeed(10)
+    #if(instructionType == 65): incrementFrameSpeed(-10)
     if(instructionType == 66): setFrameSpeed(int(rawMsg[5:9]))
-    if(instructionType == 67): animationDirection = 1
-    if(instructionType == 68): animationDirection = -1
+    if(instructionType == 67): setAnimationDirection(1)
+    if(instructionType == 68): setAnimationDirection(-1)
     if(instructionType == 80): pauseShowFrame = True
     if(instructionType == 81): pauseShowFrame = False
-    
+    if(instructionType == 82): setSynchFrame(int(rawMsg[5:9]), 0)
+    if(instructionType == 83): setSynchFrame(int(rawMsg[5:9]), nodeID) 
+        
     if((instructionType == 21) and (int(rawMsg[9 : 12]) == rowRef)):    scrollDirection = 1
     if((instructionType == 22) and (int(rawMsg[9 : 12]) == rowRef)):    scrollDirection = -1
+
+
+def setAnimationDirection(newDir):
+    global scrollDirection
+    global animationDirection
+    animationDirection = newDir
+    if(not(animationDirection == 0)): scrollDirection = 0
+    
+
+def setSynchFrame(synchFrame, frameOffset):
+    global currentFrame
+    global scrollIndex
+    currentFrame = synchFrame 
+    currentFrame = getAdjacentFrameIndex(frameOffset)
+    scrollIndex = 0
 
 
 def setFrameSpeed(newSpeed):
     global frameSpeed
     frameSpeed = newSpeed
 
-def incrementFrameSpeed(speedIncrement):
-    newSpeed = frameSpeed + speedIncrement
-    if(newSpeed < 20):      newSpeed = 20
-    if(newSpeed > 500):    newSpeed = 500
-    setFrameSpeed(newSpeed)
 
 
 def setNodeRowAndCol(rowStr, colStr):
@@ -176,3 +185,4 @@ while True:
     if not(pauseShowFrame):     
         showNextFrame()
         sleep(frameSpeed - 10)
+
