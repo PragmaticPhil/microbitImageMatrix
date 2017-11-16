@@ -99,9 +99,10 @@ ID    DESCRIPTION
 
 80    Pause
 81    Unpause
-82    Pause at a specified frame*
-83    Synch (all nodes show a specific frame from their buffer)*
+82    All synch at same frame (synch for animation)
+83    All synch at offset frame (synch for scroll)
 90    Do a check sum and report status*
+99    Rest node
 
 EXAMPLES OF ENABLED SERVER INSTRUCTIONS (and ones that are encoded in node - ones marked *  above are dreamware atm):
 ... Set dims                        = pX0600205    (pX0 60 02 05)       - dims are 2 rows by 5 cols.
@@ -115,5 +116,8 @@ EXAMPLES OF ENABLED SERVER INSTRUCTIONS (and ones that are encoded in node - one
 ... Set frame delay                 = pX0660150    (pX0 66 0150)        - set delay between frames to 150ms
 ... Animate to the left             = pX067                             - when animating through frames move to left
 ... Animate to the right            = pX068                             - when animating through frames move to right
+... Pause                           = pX080
 ... unPause                         = pX081
-... Pause                           = pX082
+... Set current frame               = pX082004                          - will set current frame to 4 - synchs animations
+... Set current frame + offset      = pX083004                          - will set current frame to 4 + nodeID - synchs scrolls
+
