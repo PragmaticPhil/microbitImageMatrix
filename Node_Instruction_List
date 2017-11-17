@@ -1,0 +1,24 @@
+Nodes can process the following commands from a server
+There are 2 distinct types of message:
+
+0 = Server Instructions.  Below is a comprehensive list of all commands a node will recognise:
+
+... Set dims                        = pX0600205 - dims are 2 rows by 5 cols.
+... Set frame buffer size           = pX0610005 - Nodes use 5 frames from their buffer
+... Scroll left (specific row)      = pX0210001 - row 1 (second row) will be set to scroll left
+... Scroll right (specific row)     = pX0220001 - row 2 (third row) will be set to scroll right
+... Scroll Left (all rows)          = pX062
+... Scroll Right (all rows)         = pX063
+... Increase Speed                  = pX064     - increases frame refresh delay by 10ms
+... decrease Speed                  = pX065     - decreases frame refresh delay by 10ms
+... Set frame delay                 = pX0660150 - set delay between frames to 150ms
+... Animate to the left             = pX067     - when animating through frames move to left
+... Animate to the right            = pX068     - when animating through frames move to right
+... Pause                           = pX080
+... unPause                         = pX081
+... Set current frame               = pX082004  - will set current frame to 4 - synchs animations
+... Set current frame + offset      = pX083004  - will set current frame to 4 + nodeID - synchs scrolls
+... Tell node to check buffer size  = pX090
+... Tell node to soft reset         = pX099
+
+1 = Image Data.  Below are clear examples of the different types of image data that will be sent
