@@ -86,8 +86,8 @@ ID    DESCRIPTION
 61    Set frame buffer size (must be < totalFrames)
 62    Scroll left (ALL rows)
 63    Scroll right (ALL rows)
-64    Speed up frame rate by hardcoded incrememt
-65    Slow down frame rate by hardcoded increment
+64    Speed up frame rate by hardcoded incrememt* deprecated - had to free up space.  Do speed processing server side only.
+65    Slow down frame rate by hardcoded increment* see above
 66    Set frame speed to param passed in in serverMessage[5:9]
 67    Animate to left (i.e. move through node buffers in increments of 1) - ALL rows
 68    Animate to right (i.e. move through node buffers in increments of -1) - ALL rows
@@ -101,8 +101,8 @@ ID    DESCRIPTION
 81    Unpause
 82    All synch at same frame (synch for animation)
 83    All synch at offset frame (synch for scroll)
-90    Do a check sum and report status*
-99    Rest node
+90    Self diagnose Frame buffer.  Nodes check their totalFrames against number of non-empty buffers & display a fail note.
+99    Reset node
 
 EXAMPLES OF ENABLED SERVER INSTRUCTIONS (and ones that are encoded in node - ones marked *  above are dreamware atm):
 ... Set dims                        = pX0600205    (pX0 60 02 05)       - dims are 2 rows by 5 cols.
@@ -120,4 +120,5 @@ EXAMPLES OF ENABLED SERVER INSTRUCTIONS (and ones that are encoded in node - one
 ... unPause                         = pX081
 ... Set current frame               = pX082004                          - will set current frame to 4 - synchs animations
 ... Set current frame + offset      = pX083004                          - will set current frame to 4 + nodeID - synchs scrolls
-
+... Tell node to check buffer size  = pX090
+... Tell node to soft reset         = pX099
