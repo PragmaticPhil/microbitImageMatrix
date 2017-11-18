@@ -39,8 +39,16 @@ There are 2 distinct types of message:
       pX - 1 - 40 - 0003 - 000 - 90009:09090:00900:09090:90009
       serverID - Image Message - to ALL nodes - put in frame buffer 3 (offset by nodeID) - Arb - image data        
 
-... to a family of nodes: WiP
-      pX - 1 - 21 - 0003 - 001 - 90009:09090:00900:09090:90009
+... to a family of nodes:
+      pX - 1 - 50 - 01 - 03 - 001 - 90009:09090:00900:09090:90009
+      serverID - Image Message - to specific nodes - starting at node 1 - every 3 node - frame buffer - image data              
+      
+      So, we use 50 to transmit the same image to a number of nodes, whose position is determined by 2 values:
+      ... starting node (say, 1)
+      ... node increment (say, 3)
+      ... above means nodes 1, 4, 7, 10 etc would all take in the image.
+      
+      
       
       
       
