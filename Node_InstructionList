@@ -33,7 +33,12 @@ There are 2 distinct types of message:
       pX121000300190009:09090:00900:09090:90009
       pX - 1 - 20 - 0003 - 001 - 90009:09090:00900:09090:90009
       serverID - Image Message - to a whole row - put in frame buffer 3 (offset by nodeID) - All nodes in row 1 - image data      
-      
+
+... Flash the same image to EVERY node:
+      pX140000300090009:09090:00900:09090:90009
+      pX - 1 - 40 - 0003 - 000 - 90009:09090:00900:09090:90009
+      serverID - Image Message - to ALL nodes - put in frame buffer 3 (offset by nodeID) - Arb - image data        
+
 ... to a family of nodes: WiP
       pX - 1 - 21 - 0003 - 001 - 90009:09090:00900:09090:90009
       
