@@ -1,3 +1,4 @@
+
 Nodes can process the following commands from a server
 There are 2 distinct types of message:
 
@@ -21,4 +22,21 @@ There are 2 distinct types of message:
 ... Tell node to check buffer size  = pX090
 ... Tell node to soft reset         = pX099
 
-1 = Image Data.  Below are clear examples of the different types of image data that will be sent
+1 = Image Data.  Below are clear examples of the different types of image data that will be sent:
+
+... Directly to a specified node:
+      pX100000501290009:09090:00900:09090:90009
+      pX - 1 - 00 - 0005 - 012 - 90009:09090:00900:09090:90009
+      serverID - Image Message - to a specific node - put image in frame buffer 5 - Oi, node 12, talking to you - image data
+      
+... To an entire row:
+      pX121000300190009:09090:00900:09090:90009
+      pX - 1 - 20 - 0003 - 001 - 90009:09090:00900:09090:90009
+      serverID - Image Message - to a whole row - put in frame buffer 3 (offset by nodeID) - All nodes in row 1 - image data      
+      
+... to a family of nodes: WiP
+      pX - 1 - 21 - 0003 - 001 - 90009:09090:00900:09090:90009
+      
+      
+      
+      
