@@ -1,7 +1,7 @@
 Protocols and examples of server data that is sent to nodes:
 
 The server will send 2 types of message (over radio) to a node.
-Messages are sent in plain text (yep!) and conform to the map below:
+Messages are sent in plain text and conform to the map below:
 
 MAP (where serverMessage as a message string containing image data):
 1   serverMessage[0:2]   = ServerID
@@ -17,26 +17,32 @@ So, ALL messages have the same basic pattern:
    [serverID, 2char][serverInstruction, 2 char][InstructionParams, 4char][TargetID, 3char][imageData, 29 char]
 The length of the message depends on the MESSAGE TYPE and the SERVER INSTRUCTION CODE.
 
+NB - a fundamental thing to note is that there are only 2 different types of radio message sent by the server:
+
+      TYPE0:   Server instructions.  
+      TYPE1:   Image data. 
+
+----------------------------------------------------------------------------------------------------------------
+
 TYPE0:   Server instructions.  
-         Includes instructions that nodes use to configure operational values, such as their row / col, or default interframe delay
+         Includes instructions that nodes use to configure operational values, such as their row / col, 
+         or to influence the way the nodes display (e.g. Pause)
 
          FORMAT: [serverID, 3char][messageType, 2 char][InstructionParams, 4char][TargetID, 3char] 
 
-       e.g.    pX0_60_0305_999  (rem - we don't send underscores, so this is sent as pX0600104999
+         Note - signals are as long as they need to be - we omit fields from right if they are irrelevant:
+            SO... pX062       = pX0620000000
+            Nodes are coded so there is very little chance of trying to read extraneous chars, so they are not sent.
+
+       e.g.    pX0_60_0305  (rem - we don't send underscores though)
                pX0 = message from server with an instruction (so will NOT have image data)
                60 = This message is telling all nodes to set their ROW and COL params 
                03 = There are 3 rows (this is a count so absolute)
                05 = There are 5 columns
                
-      I have wrestled with a dilemmma: 
-      To follow the pattern above, for  many types of server instructions there are dummy params - in the examples about the 999 is irrelevant.
-      Do I send dummy chars or not?
-      I like the security of not worrying about variable length, but I hate wasting chars that are send over radio.
-      Avoidance of waste trumps vague fears I can handle in the node code.
-      SO... for now, I am going to send truncated server messages where possible, but be wary of this.
+      see end for full list.
       
-      Anyway, the way nodes are set up for current iteration, sending pX0600104999 and pX0600104 will have same effect
-      Hence current server code sends only necessary data, and day is saved by nodes only reading necessary data per instruction
+                           ----------------------------------------------------
 
 TYPE1:   Image data.  
           The core of this app is the server passing image data to the nodes.
