@@ -41,26 +41,21 @@ def getServerMessage():
 
 
 def processServerMessage(rawMsg):
-    if(len(rawMsg) < 5): return
-    if(not isValidServerMessage(rawMsg)):    return
-    if(rawMsg[2 : 3] == "0"):   processServerInstruction(rawMsg)
-    else:                       processImageMessage(rawMsg)
+    if(len(rawMsg) < 5):                return
+    if(not(rawMsg[0 : 2] == "pX")):     return
+    print("Valid msg: " + rawMsg)
+    if(rawMsg[2 : 3] == "0"):                   processServerInstruction(rawMsg)
+    else:                               
+        if(isRelevantImageMessage(rawMsg)):     processImageMessage(rawMsg)
 
 
-def isValidServerMessage(rawMsg):
-    if(rawMsg[0 : 2] == "pX"):  return isRelevantServerMessage(rawMsg)
-    return False
-
-
-def isRelevantServerMessage(rawMsg):
+def isRelevantImageMessage(rawMsg):
 #    try:
-    if(rawMsg[2 : 3] == "0"):                                           return True
+    if(not(rawMsg[2 : 3] == "1")):                                      return False
     if((rawMsg[3 : 5] == "00") and (int(rawMsg[9 : 12]) == nodeID)):    return True
     if((rawMsg[3 : 4] == "2") and (int(rawMsg[9 : 12]) == rowRef)):     return True
     return False
 #    except:
-
-    return False
 
 
 def processImageMessage(rawMsg):
@@ -68,17 +63,18 @@ def processImageMessage(rawMsg):
     imageStr = rawMsg[12 : 41]
     serverMsgStr = rawMsg[3 : 5]
     frameRef = int(rawMsg[5 : 9])
-
+    print("Processing image")
     if(serverMsgStr == "00"):
         imageDataStore[frameRef] = imageStr
+        print("Inserting image into buffer - " + str(frameRef))
         display.show(Image(imageDataStore[frameRef]))
         return
 
     if(totalFrames == 0): return
 
     if(serverMsgStr == "20"):          
-        frameBufferRef = frameRef + colRef
-        if(frameBufferRef  >= totalFrames): frameBufferRef = (frameBufferRef % totalFrames)
+        frameBufferRef = (frameRef + colRef) % totalFrames
+        print("FrameBufferRef = " + str(frameBufferRef))
         imageDataStore[frameBufferRef ] = imageStr
         display.show(Image(imageDataStore[frameBufferRef]))
 
@@ -87,16 +83,17 @@ def processServerInstruction(rawMsg):
     global pauseShowFrame
     global scrollDirection
     global totalFrames
+    global frameSpeed
     
     instructionType = int(rawMsg[3 : 5])
+    print("Server instruction = " + str(instructionType))
     if(instructionType == 99): reset()
+    if(instructionType == 90): checkBufferSize()    
     if(instructionType == 60): setNodeRowAndCol(rawMsg[5 : 7], rawMsg[7 : 9])
     if(instructionType == 61): totalFrames = int(rawMsg[5:9])
     if(instructionType == 62): scrollDirection = 1
     if(instructionType == 63): scrollDirection = -1
-    #if(instructionType == 64): incrementFrameSpeed(10)
-    #if(instructionType == 65): incrementFrameSpeed(-10)
-    if(instructionType == 66): setFrameSpeed(int(rawMsg[5:9]))
+    if(instructionType == 66): frameSpeed = int(rawMsg[5:9])
     if(instructionType == 67): setAnimationDirection(1)
     if(instructionType == 68): setAnimationDirection(-1)
     if(instructionType == 80): pauseShowFrame = True
@@ -106,6 +103,15 @@ def processServerInstruction(rawMsg):
         
     if((instructionType == 21) and (int(rawMsg[9 : 12]) == rowRef)):    scrollDirection = 1
     if((instructionType == 22) and (int(rawMsg[9 : 12]) == rowRef)):    scrollDirection = -1
+
+
+def checkBufferSize():
+    bufferFull = True
+    for i in range(0, totalFrames, 1):
+        if(imageDataStore[i] == ""):    bufferFull = False
+
+    if(bufferFull):     display.show(Image("00000:00009:00090:90900:09000"))
+    else:               display.show(Image("90009:09090:00900:09090:90009"))
 
 
 def setAnimationDirection(newDir):
@@ -121,12 +127,6 @@ def setSynchFrame(synchFrame, frameOffset):
     currentFrame = synchFrame 
     currentFrame = getAdjacentFrameIndex(frameOffset)
     scrollIndex = 0
-
-
-def setFrameSpeed(newSpeed):
-    global frameSpeed
-    frameSpeed = newSpeed
-
 
 
 def setNodeRowAndCol(rowStr, colStr):
@@ -160,7 +160,7 @@ def makeNextScrollFrame():
     if((scrollIndex > 4) or (scrollIndex < 0)): currentFrame = getAdjacentFrameIndex(scrollDirection)
     scrollIndex = scrollIndex % 5
 
-    if((scrollIndex == 0) or (scrollDirection == 0)): return imageDataStore[currentFrame]
+    if(scrollIndex == 0): return imageDataStore[currentFrame]
 
     nextFrame = getAdjacentFrameIndex(scrollDirection)
 
