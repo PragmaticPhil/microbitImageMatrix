@@ -43,7 +43,7 @@ TYPE0:   Server instructions.
       see end for full list.
       
                            ----------------------------------------------------
-
+ 
 TYPE1:   Image data.  
           The core of this app is the server passing image data to the nodes.
          
@@ -84,7 +84,8 @@ ID    DESCRIPTION
 21    Scroll left (this row only)
 22    Scroll right (this row only)
 
-40    Applies to whole matrix - used to send image data to every node
+40    Applies to whole matrix - used to send image data to every node and inserted into the specified buffer
+41    Applies to whole matrix - used to send image data to every node - buffer offset by nodeID
 
 60+   used for instructions aimed at WHOLE MATRIX - all nodes:
 60    Set your ROW / COL params
