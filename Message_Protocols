@@ -55,14 +55,14 @@ TYPE1:   Image data.
               0009   = save the image in Frame 9 buffer (which will be buffer #10 of course)
               023    = node that needs to process this is nodeID = 23
               
-      Note - an important use case of the matrix is to smoothly scroll images - this will be enabled for horizontal and (dreamware alert) vertical
-      scrolling (and maybe a combo in future iterations).
-      To support this we will enable the server to send an image to a wholoe ROW (or COL) of nodes at the same time...
+      Note - an important use case of the matrix is to smoothly scroll images - this will be enabled for horizontal scrolling only at 1st
+      To support this we will enable the server to send an image to a wholoe ROW of nodes at the same time...
 
 Nodes will insert the image into their buffers in line with THEIR location in the matrix... which is set in (0) above.
 
-       e.g.   pX1_20_0001_02_!90909:90909:90909:90909:90909
-              pX1    = message from server with image data
+       e.g.   pX_1_20_0001_02_!90909:90909:90909:90909:90909
+              pX     = message from server
+              1      = message contains image data 
               20     = all nodes in the relevant ROW should save this image to one of their buffers
               0001   = default / base Frame buffer - each node adjusts where they save image based on this and their location in the row.
               02     = We are talking to row1 (the second row).
@@ -83,6 +83,7 @@ ID    DESCRIPTION
 20    Save the image to the buffer in the InstructionParams field OFFSET BY COL LOCATION
 21    Scroll left (this row only)
 22    Scroll right (this row only)
+24    Save the image to the buffer in the InstructionParams field (NOT offset)
 
 40    Applies to whole matrix - used to send image data to every node and inserted into the specified buffer
 41    Applies to whole matrix - used to send image data to every node - buffer offset by nodeID
