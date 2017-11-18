@@ -54,7 +54,8 @@ TYPE1:   Image data.
               00     = instruction from server (save image to specific node)
               0009   = save the image in Frame 9 buffer (which will be buffer #10 of course)
               023    = node that needs to process this is nodeID = 23
-              
+
+
       Note - an important use case of the matrix is to smoothly scroll images - this will be enabled for horizontal scrolling only at 1st
       To support this we will enable the server to send an image to a wholoe ROW of nodes at the same time...
 
@@ -84,11 +85,21 @@ ID    DESCRIPTION
 21    Scroll left (this row only)
 22    Scroll right (this row only)
 24    Save the image to the buffer in the InstructionParams field (NOT offset)
+**    Note on 20 and 24...
+      ... the difference between them is the offset.  This means:
+      ... with 20, node0 inserts image into buffer0, node1 inserts image into buffer1, node2 inserts image into buffer2 etc
+      ... with 24, node0 inserts image into buffer0, node1 inserts image into buffer0, node2 inserts image into buffer0 etc
+      ... SO   - with 24 all nodes in the whole role will show the same image at the same time.
+      ...      - with 20 all nodes in row will show a different image, corresponding to their position.
+
+      ... Use 24 for animation and 20 for scrolling
 
 40    Applies to whole matrix - used to send image data to every node and inserted into the specified buffer
 41    Applies to whole matrix - used to send image data to every node - buffer offset by nodeID
 
-60+   used for instructions aimed at WHOLE MATRIX - all nodes:
+50    Applies to several nodes in the matrix - location of nodes determined by params in the 4 char InstructionsParam field.
+
+60+   used for instructions aimed at WHOLE MATRIX (no image data below) - all nodes:
 60    Set your ROW / COL params
 61    Set frame buffer size (must be < totalFrames)
 62    Scroll left (ALL rows)
@@ -111,7 +122,7 @@ ID    DESCRIPTION
 90    Self diagnose Frame buffer.  Nodes check their totalFrames against number of non-empty buffers & display a fail note.
 99    Reset node
 
-EXAMPLES OF ENABLED SERVER INSTRUCTIONS (and ones that are encoded in node - ones marked *  above are dreamware atm):
+EXAMPLES OF ENABLED SERVER INSTRUCTIONS (A full utd list is in a separate doc in the master branch)
 ... Set dims                        = pX0600205    (pX0 60 02 05)       - dims are 2 rows by 5 cols.
 ... Set frame buffer size           = pX0610005    (pX0 60 0005)        - Nodes use 5 frames from their buffer
 ... Scroll left (specific row)      = pX0210001    (pX0 21 0001)        - row 1 (second row) will be set to scroll left
