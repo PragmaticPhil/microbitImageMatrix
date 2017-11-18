@@ -84,8 +84,7 @@ ID    DESCRIPTION
 21    Scroll left (this row only)
 22    Scroll right (this row only)
 
-4x    used for instructions aimed at WHOLE COLUMNS:
-... outside scope and unlikely to fit onto node code.  Reserved for now anyway.
+40    Applies to whole matrix - used to send image data to every node
 
 60+   used for instructions aimed at WHOLE MATRIX - all nodes:
 60    Set your ROW / COL params
