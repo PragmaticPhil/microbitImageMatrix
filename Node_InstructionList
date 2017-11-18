@@ -40,6 +40,7 @@ There are 2 distinct types of message:
       serverID - Image Message - to ALL nodes - put in frame buffer 3 (offset by nodeID) - Arb - image data        
 
 ... to a family of nodes:
+      pX150010300190009:09090:00900:09090:90009
       pX - 1 - 50 - 01 - 03 - 001 - 90009:09090:00900:09090:90009
       serverID - Image Message - to specific nodes - starting at node 1 - every 3 node - frame buffer - image data              
       
