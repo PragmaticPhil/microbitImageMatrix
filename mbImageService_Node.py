@@ -45,10 +45,10 @@ def processServerMessage(rawMsg):
 
 def isRelevantImageMessage(rawMsg):
 #    try:
-    if(not(rawMsg[2 : 3] == "1")):                                      return False
-    if(rawMsg[3 : 4] == "4"):                                           return True
-    if((rawMsg[3 : 5] == "00") and (int(rawMsg[9 : 12]) == nodeID)):    return True
-    if((rawMsg[3 : 4] == "2") and (int(rawMsg[9 : 12]) == getRowRef())):     return True
+    if(not(rawMsg[2 : 3] == "1")):                                          return False
+    if(rawMsg[3 : 4] == "4"):                                               return True
+    if((rawMsg[3 : 5] == "00") and (int(rawMsg[9 : 12]) == nodeID)):        return True
+    if((rawMsg[3 : 4] == "2") and (int(rawMsg[9 : 12]) == getRowRef())):    return True
     print("!")
     return False
 #    except:
@@ -80,7 +80,7 @@ def processServerInstruction(rawMsg):
     print(str(instructionType))
     if(instructionType == 99): reset()
     if(instructionType == 90): checkBufferSize()    
-    if(instructionType == 60): setNodeRowAndCol(rawMsg[5 : 7], rawMsg[7 : 9])
+    if(instructionType == 60): setMatrixDimensions(rawMsg[5 : 7], rawMsg[7 : 9])
     if(instructionType == 61): totalFrames = int(rawMsg[5:9])
     if(instructionType == 62): updateAnimationParams(1, 1)
     if(instructionType == 63): updateAnimationParams(-1, 1)
@@ -120,12 +120,11 @@ def setSynchFrame(synchFrame, frameOffset):
     scrollIndex = 0
 
 
-def setNodeRowAndCol(rowStr, colStr):
+def setMatrixDimensions(rowStr, colStr):
     global totalRows
     global totalCols
     totalRows = int(rowStr)
     totalCols = int(colStr)
-
 
 def getColRef():
     return(int(nodeID % totalCols))
@@ -155,7 +154,7 @@ def makeNextScrollFrame():
 
     if(scrollIndex == 0): return imageDataStore[currentFrame]
 
-    nextFrame = getAdjacentFrameIndex(animationDirection)
+    nextFrame = getAdjacentFrameIndex(1)
 
     # 09090:90909:90009:09090:00900... 0, 6, 12, 18, 24
     scrollImageData = ""
