@@ -1,19 +1,35 @@
 # microbitImageMatrix
-A client microbit serves image data, metadata and instructions to nodes, which are microbits in a matrix. 
-Nodes display as per server instructions.
+A client microbit serves image data, metadata and instructions to nodes.
+Nodes are microbits in a matrix.
+Nodes do not contains any image data - they display images pass over radion by the server.
 
 The purpose of this app is to allow a single micro:bit to control the visual output of a matrix of other micro:bits.
+In theory one server could control a very large number of nodes.
+In addition, you could have several servers all controlling the same matrix.
 
-The goal of this app is to be flexible - to allow a server to control multiple different shapes (i.e. row x col)
-of nodes without needing to recode / reflash the nodes.
+ALL server code in Master is just throw away test code.
+Ultimately I intend to build the real server in Excel:
+... this will comm via serial with a single micro:bit, which will relay the instruction via radio to the nodes.
+I still need to work out exactly how to this though!
+
+One goal of this app is to be flexible:  to allow a server to control multiple different shapes (i.e. row x col)
+of nodes without needing to recode / reflash the nodes.  This has been achieved.
 
 Setup:
 ... there is NO wiring
 ... every micro:bit is powered by a battery
 ... communication between micro:bits is done by radio.
 
+Key Points:
+... each node has a buffer of up to 10 images.  Data is flashed by the server and nodes fill their buffers with this data
+... buffers can be refreshed in real time, and nodes can play through their buffers.
+... ... 'Animation' = nodes show buffers sequentially
+... ... 'Scrolling' = nodes transition smoothly from 1 frame to the next.
+
 Overview of Functionality:
-... The 'server' will contain image data, this image data will be for a 'high' resolution (say 125x100 pixels)
+... The 'server' will contain image data:
+... ... this image data could be for a 'high' resolution (say 125x100 pixels).  This could be used as a back-drop.  Sprites or suchlike could then be drawn on the back-drop.
+... ... simple animations can also be supported, as can scrolling.
 ... A number of 'nodes' will listen for instructions from the server.
 ... Each node will occupy a given space in 2d (row, column)
 ... The server will break down the large image into chunks and will serve them up to each node
