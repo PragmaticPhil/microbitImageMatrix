@@ -56,20 +56,21 @@ def isRelevantImageMessage(rawMsg):
 
 def processImageMessage(rawMsg):
     global imageDataStore
-    serverMsgStr = rawMsg[3 : 5]
-    frameRef = int(rawMsg[5 : 9])
-    if((serverMsgStr == "00") or (serverMsgStr == "40")or (serverMsgStr == "24")):
-        imageDataStore[frameRef] = rawMsg[12 : 41]
-        display.show(Image(imageDataStore[frameRef]))
-        return
 
-    #if(totalFrames == 0): return
+    try:
+        serverMsgStr = rawMsg[3 : 5]
+        frameRef = int(rawMsg[5 : 9])
+        if((serverMsgStr == "00") or (serverMsgStr == "40")or (serverMsgStr == "24")):
+            sleep(25)
+            imageDataStore[frameRef] = rawMsg[12 : 41]
+            return
 
-    if((serverMsgStr == "20") or (serverMsgStr == "41")):
-        frameBufferRef = (frameRef + getColRef()) % totalFrames
-        imageDataStore[frameBufferRef ] = rawMsg[12 : 41]
-        display.show(Image(imageDataStore[frameBufferRef]))
-
+        if((serverMsgStr == "20") or (serverMsgStr == "41")):
+            frameBufferRef = (frameRef + getColRef()) % totalFrames
+            sleep(25)
+            imageDataStore[frameBufferRef] = rawMsg[12 : 41]
+    except:
+        display.show("!")
 
 def processServerInstruction(rawMsg):
     global pauseShowFrame
@@ -77,7 +78,7 @@ def processServerInstruction(rawMsg):
     global frameSpeed
     
     instructionType = int(rawMsg[3 : 5])
-    print(str(instructionType))
+    #print(str(instructionType))
     if(instructionType == 99): reset()
     if(instructionType == 90): checkBufferSize()    
     if(instructionType == 60): setMatrixDimensions(rawMsg[5 : 7], rawMsg[7 : 9])
@@ -92,13 +93,15 @@ def processServerInstruction(rawMsg):
     if(instructionType == 82): setSynchFrame(int(rawMsg[5:9]), 0)
     if(instructionType == 83): setSynchFrame(int(rawMsg[5:9]), nodeID) 
         
-    if((instructionType == 21) and (int(rawMsg[9 : 12]) == getRowRef())):    updateAnimationParams(1, 1)
-    if((instructionType == 22) and (int(rawMsg[9 : 12]) == getRowRef())):    updateAnimationParams(-1, 1)
+    #if((instructionType == 21) and (int(rawMsg[9 : 12]) == getRowRef())):    updateAnimationParams(1, 1)
+    #if((instructionType == 22) and (int(rawMsg[9 : 12]) == getRowRef())):    updateAnimationParams(-1, 1)
 
 
 def checkBufferSize():
     bufferFull = True
     for i in range(0, totalFrames, 1):
+        display.show(Image(imageDataStore[i]))
+        sleep(30)
         if(imageDataStore[i] == ""):    bufferFull = False
 
     if(bufferFull):     display.show(Image("00000:00009:00090:90900:09000"))
