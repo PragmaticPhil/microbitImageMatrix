@@ -1,0 +1,44 @@
+HOW TO MAKE IT WORK: 
+
+You need at least 2 micro:bits 
+
+miro:bit1... on the first one flash mbImageService_Node.py. Check the hardcoded ID (should be 0).
+... This is your node.
+... By default it is node 0
+... NodeID is HARDCODED.
+... You can add as many nodes as you want.
+... For this example server code 4x5 (20) is the max though.
+NB - edit the nodeID in code on each node that you add to the matrix
+
+
+micro:bit2... on the second one flash serverTest_AllIn1_4x5Matrix.py 
+... This is your server.
+... It will provide image data and instructions to the node. 
+
+Controlling the server: 
+A BUTTON:
+... click to transmit image data. 
+... it toggles - click 1 sends 5 frame animation, click 2 sends 10 frame word
+
+B BUTTON:
+... toggle animation type
+... click 1 = animation, click 2 = scroll
+
+SHAKE:
+... pause / unpause.
+... rem = must be unpaused for the animations to work.
+
+TILT LEFT:
+... set animation direction to left
+... rem - if not animating, is Pause on?
+
+TILT RIGHT:
+... set animation direction to right
+... rem - if not animating, is Pause on?
+
+The followin functions are not coded:
+... reset all nodes
+... set frame speed
+... synch nodes
+I just ran out of input options!
+
