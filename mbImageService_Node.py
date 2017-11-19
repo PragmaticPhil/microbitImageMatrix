@@ -63,7 +63,7 @@ def processImageMessage(rawMsg):
         display.show(Image(imageDataStore[frameRef]))
         return
 
-    if(totalFrames == 0): return
+    #if(totalFrames == 0): return
 
     if((serverMsgStr == "20") or (serverMsgStr == "41")):
         frameBufferRef = (frameRef + getColRef()) % totalFrames
