@@ -61,16 +61,15 @@ def processImageMessage(rawMsg):
         serverMsgStr = rawMsg[3 : 5]
         frameRef = int(rawMsg[5 : 9])
         if((serverMsgStr == "00") or (serverMsgStr == "40")or (serverMsgStr == "24")):
-            sleep(25)
             imageDataStore[frameRef] = rawMsg[12 : 41]
             return
 
         if((serverMsgStr == "20") or (serverMsgStr == "41")):
             frameBufferRef = (frameRef + getColRef()) % totalFrames
-            sleep(25)
             imageDataStore[frameBufferRef] = rawMsg[12 : 41]
     except:
         display.show("!")
+
 
 def processServerInstruction(rawMsg):
     global pauseShowFrame
